@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -x
+
+source /assets/bin/entrypoint.functions
+source /assets/bin/entrypoint.functions-drupal
+
+dump-docker-environment
+
+configure-locales
+
+link-assets
+
+set-environment-divergences
+
+test -z "$DEVELOPER_USER" && export DEVELOPER_USER="developer"
+create-developer-user $DEVELOPER_USER
+
+init-mysql-db
+
+setup-drupal # setups drush also
+
+add-virtualhosts-to-etc-hosts
+
+leave-supervisord-in-foreground

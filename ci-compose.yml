@@ -1,0 +1,38 @@
+version: '2'
+services:
+  ci-_PROJECT_NAME_.emergyalabs.com:
+    image: ${DOCKER_IMAGE}
+    ports:
+      - "22122:22"
+    environment:
+      - HOST_UID=${HOST_UID}
+      - HOST_GID=${HOST_GID}
+      - DEVELOPER_USER=${DEVELOPER_USER}
+      - LOCALES=es_ES.UTF-8 en_US.UTF-8
+      - PROJECT_NAME=${PROJECT_NAME}
+      - ENVIRONMENT=${ENVIRONMENT}
+      - ENV_VHOST=${ENV_VHOST}
+      - VIRTUAL_HOSTS=${VIRTUAL_HOSTS}
+      - VIRTUAL_HOST=http://${ENV_VHOST}
+      - EXCLUDE_PORTS=22
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASS=${MYSQL_PASS}
+      - MYSQL_DBNAME=${MYSQL_DBNAME}
+      - MEMCACHED_HOST=${MEMCACHED_HOST}
+      - MEMCACHED_PORT=${MEMCACHED_PORT}
+      - DRUPAL_VERSION=${DRUPAL_VERSION}
+      - DRUPAL_ROOT=${DRUPAL_ROOT}
+      - DRUPAL_DEFAULT_SITENAME=${PROJECT_NAME}
+      - DRUPAL_SALT=${DRUPAL_SALT}
+    volumes:
+      - ${DATA_DIR}/dot-drush:${HOME}/.drush
+      - ${SSH_CREDENTIALS_DIR}:${SSH_CREDENTIALS_DIR}
+      - ${PROJECT_DIR}:${PROJECT_DIR}
+      - ${PROJECT_DIR}/src:/var/www/html
+      - ${DATA_DIR}:/data
+      - ${DATA_DIR}/docker-containers-volumes/${DRUPAL_ROOT}/sites/default/private:${DRUPAL_ROOT}/sites/default/private
+      - ${DATA_DIR}/docker-containers-volumes/${DRUPAL_ROOT}/sites/default/files:${DRUPAL_ROOT}/sites/default/files
+      - ${DATA_DIR}/docker-containers-volumes/var/log/apache2:/var/log/apache2
+      - ${DATA_DIR}/docker-containers-volumes/etc/apache2/htpasswd/env-htpasswd:/etc/apache2/htpasswd/env-htpasswd
+      - ${DATA_DIR}/docker-containers-volumes/var/lib/mysql:/var/lib/mysql

@@ -1,0 +1,181 @@
+#!/bin/bash
+set -x
+
+function setup-drush(){
+
+  DRUSH_HOME_DIR="/home/$DEVELOPER_USER/.drush"
+  chown -R ${DEVELOPER_USER}:${DEVELOPER_USER}  $DRUSH_HOME_DIR
+
+  # Replace DRUPAL_ROOT in Drupal aliases '/etc/drush/.'
+  for DRUSH_ALIASES_FILE in $(ls /etc/drush)
+  do
+    sed -i 's|_DRUPAL_ROOT_|'${DRUPAL_ROOT}'|g' /etc/drush/$DRUSH_ALIASES_FILE
+    sed -i 's|_PROJECT_NAME_|'${PROJECT_NAME}'|g' /etc/drush/$DRUSH_ALIASES_FILE
+  done
+
+}
+
+function setup-drupal() {
+
+  case $DRUPAL_VERSION in
+    7)
+      if [ -z "$DRUPAL_ROOT" ]
+      then
+        export DRUPAL_ROOT="/var/www/html"
+      else
+        export DRUPAL_ROOT
+      fi
+    ;;
+    8)
+      if [ -z "$DRUPAL_ROOT" ]
+      then
+        export DRUPAL_ROOT="/var/www/html/web"
+      else
+        export DRUPAL_ROOT
+      fi
+      # sync composer-installed files/depends:
+      for dir in drush/contrib vendor web/core web/modules/contrib web/themes/contrib web/profiles/contrib web/libraries
+      do
+        rsync -Pav /assets/${DRUPAL_ROOT}/../$dir/ ${DRUPAL_ROOT}/../$dir/
+        chown -R ${DEVELOPER_USER}:www-data ${DRUPAL_ROOT}/../$dir
+      done
+      
+    ;;
+  esac
+
+  for drupal_site in default $VIRTUAL_HOSTS
+  do
+    DRUPAL_SITE=$(echo $drupal_site | sed "s|${ENVIRONMENT}-||g")
+    if [ -e "${DRUPAL_ROOT}/sites/$DRUPAL_SITE/default.settings.php.tpl" ]
+    then
+      cp -a ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/default.settings.php.tpl ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.php
+    else 
+      cp -a /assets/var/www/html/default.settings.php.tpl ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.php
+    fi
+    chown $DEVELOPER_USER:www-data ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.php
+    if [ "$DRUPAL_VERSION" == "7" ]
+    then
+      mv ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.php ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/default.settings.php
+    fi
+  done
+
+  setup-drush
+
+  # config apache's default vhost default documentroot to $DRUPAL_ROOT
+  sed -i "s|_DRUPAL_ROOT_|$DRUPAL_ROOT|g" /etc/apache2/sites-enabled/*
+
+  # load init-mysql-db generated environment
+  source /etc/profile.d/mysql-environment.sh
+  # generate drupal config based on environment variables
+  if [[ -z "$MYSQL_HOST" ]] || [[ "$MYSQL_HOST" == "localhost" ]]
+  then
+  
+    for drupal_site in default $VIRTUAL_HOSTS
+    do
+      DRUPAL_SITE=$(echo $drupal_site | sed "s|${ENVIRONMENT}-||g")
+      if [ -e ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tpl-${ENVIRONMENT} ]
+      then
+        cp -a ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tpl-${ENVIRONMENT} ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp
+      else
+        cp -a /assets/var/www/html/settings.local.php.tpl-drupal-$DRUPAL_VERSION ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp
+      fi
+  
+      sed -i "s|_MYSQL_HOST_|localhost|g" ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp
+      sed -i "s|_MYSQL_USER_|root|g" ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp
+      sed -i "s|_MYSQL_PASS_||g" ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp
+      sed -i "s|_MYSQL_DBNAME_|$MYSQL_DBNAME|g" ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp
+  
+      cp -a ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php
+      rm -f ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp
+
+    done
+  
+  # else, we fill the settings.local.php with the provided credentials
+  else
+  
+    for drupal_site in default $VIRTUAL_HOSTS
+    do
+      DRUPAL_SITE=$(echo $drupal_site | sed "s|${ENVIRONMENT}-||g")
+      if [ -e ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tpl-${ENVIRONMENT} ]
+      then
+        cp -a ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tpl-${ENVIRONMENT} ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp
+      else
+        cp -a /assets/var/www/html/settings.local.php.tpl-drupal-$DRUPAL_VERSION ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp
+      fi
+  
+      env | grep ^MYSQL_ | while read var;
+      do
+        VAR_TO_REPLACE=$(echo $var | awk -F= '{print $1}')
+        VALUE_TO_SET=$(echo $var | awk -F= '{print $2}')
+        sed -i "s|_${VAR_TO_REPLACE}_|${VALUE_TO_SET}|g" ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp
+      done
+  
+      cp -a ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php
+      rm -f ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp
+    done
+    rm -f /etc/supervisor/conf.d/mysql.ini
+  fi
+  
+  # only if memcached info is provided, we setup the module
+  if [[ ! -z "$MEMCACHED_HOST" ]] && [[ ! -z "$MEMCACHED_PORT" ]]
+  then
+    cd ${DRUPAL_ROOT}
+    drush pm-enable memcache -y
+    cd $OLDPWD
+  
+    for drupal_site in default $VIRTUAL_HOSTS
+    do
+      DRUPAL_SITE=$(echo $drupal_site | sed "s|${ENVIRONMENT}-||g")
+      cp -a ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp
+      cat ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tpl-memcached-${ENVIRONMENT} >> ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp
+  
+      env | grep ^MEMCACHED_ | while read var;
+      do
+        VAR_TO_REPLACE=$(echo $var | awk -F= '{print $1}')
+        VALUE_TO_SET=$(echo $var | awk -F= '{print $2}')
+        sed -i "s|_${VAR_TO_REPLACE}_|${VALUE_TO_SET}|g" ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp
+      done
+  
+      cp -a ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php
+      rm -f /etc/supervisor/conf.d/memcached.ini
+      rm -f ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php.tmp
+  
+    done
+  fi
+
+  # set custom env drupal env vars into any .yml/.php file
+  env | grep ^DRUPAL_ | while read var;
+  do
+    VAR_TO_REPLACE=$(echo $var | awk -F= '{print $1}')
+    VALUE_TO_SET=$(echo $var | awk -F= '{print $2}')
+    sed -i "s|_${VAR_TO_REPLACE}_|${VALUE_TO_SET}|g" ${DRUPAL_ROOT}/sites/*/*php
+    sed -i "s|_${VAR_TO_REPLACE}_|${VALUE_TO_SET}|g" ${DRUPAL_ROOT}/sites/*/*yml
+  done
+
+  if [ "$DRUPAL_VERSION" == "7" ]
+  then
+    mv ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.local.php ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.php
+  fi
+
+  ln -nfs /assets/bin/fix-permissions.sh /usr/local/bin/fix-permissions.sh
+  /usr/local/bin/fix-permissions.sh
+
+}
+
+function set-environment-divergences() {
+
+  # remove xdebug if we are not in devel/staging environment
+  if [[ -z "$(echo $ENVIRONMENT | grep "dev\|stg")" ]]
+  then
+    rm /etc/php/apache2/conf.d/20-xdebug.ini
+  fi
+
+  # unset basic auth if we are not in devel/staging
+
+  # setup for production: use the containerized app code instead of using the mounted volume as in development
+  # if [ "$ENVIRONMENT" == "pro" ]
+  # then
+  # rsync -Pav /assets/var/www/html/ /var/www/html/
+  # fi
+
+}
