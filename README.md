@@ -31,7 +31,7 @@ Start a drupal development
 * Fork project
 * Setup your enviroment:
 ```
-export DOCKER_IMAGE="emergya/ubuntu_16.04-drupal:latest"
+export DOCKER_IMAGE="emergya/automated-ubuntu_16.04-drupal:latest"
 
 export DEVELOPER_USER=$(basename $HOME)
 export PROJECT_NAME="my-drupal"
