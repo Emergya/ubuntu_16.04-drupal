@@ -2,13 +2,13 @@
 
 You will wonder, yet another drupal docker container?
 
-And our answer is 'yes', a container for developers. We craft it with love listening to our drupal developers suggerencies; since they are the ones who use them everyday.
+And our answer is 'yes', a container for developers. We craft it with love listening to our drupal developers suggestions; since they are the ones who use them everyday.
 
 This container is not intended for production, but it could.
 
 ## So, what's this about?
 
-This a drupal-able docker container based on the latest Ubuntu LTS (Long Time Support) release (ubuntu-16.04) that pretends to be developer friendly and make easy the task of starting a containerized local development.
+This a drupal-able docker container based on the latest Ubuntu LTS (Long Time Support, ubuntu-16.04) release that pretends to be developer friendly and make easy the task of starting a containerized local development.
 
 You are supposed to run any of the supported drupal versions just by:
 
@@ -51,10 +51,6 @@ sed -i "s|_PROJECT_NAME_.emergyalabs.com|$ENV_VHOST|g" *compose.yml # renames co
 docker-compose -f dev-compose.yml exec $ENV_VHOST \
   /bin/bash -c 'cd /var/www/html; composer install; chown -R $DEVELOPER_USER:www-data /var/www/html'  
 ```
-  * If you also want a database to be deployed as initial database, you can place it in '$PROJECT_DIR/data/initial.sql'. Note that, because the dump is imported, it must include the 'CREATE DATABASE' and 'USE $database' statements at the begining and while running the container, you will need to set the following enviroment variable in order to render 'settings.php' correctly:
-```
-export MYSQL_DBNAME="your-db-name"
-```
 * Or download a fresh "drupal-$VERSION" source copy using 'composer create-project' with this snippet:
 ```
 # [un]comment correspondingly
@@ -84,7 +80,12 @@ echo "Save \$DRUPAL_SALT for future deploys since db is seeded with it: $DRUPAL_
 docker-compose -f $ENVIRONMENT-compose.yml up -d
 ```
 
-Note that if you are performing a fresh drupal installation (when no 'data/initial.sql' database is provided), you will need to set the correct permissions for the programatically (based on container's environment variables) generated 'settings.php'.
+NOTE: if you want a database to be deployed as initial database, you can place it in '$PROJECT_DIR/data/initial.sql'. Note that, because the dump is imported, it must include the 'CREATE DATABASE' and 'USE $database' statements at the begining and while running the container, you will need to set the following enviroment variable in order to render 'settings.php' correctly:
+```
+export MYSQL_DBNAME="your-db-name"
+```
+
+If you are performing a fresh drupal installation (when no 'data/initial.sql' database is provided), you will need to set the correct permissions for the programatically (based on container's environment variables) generated 'settings.php'.
 You can do it with this snippet:
 ```
 docker-compose -f $ENVIRONMENT-compose.yml exec $ENV_VHOST /bin/bash --login -c 'chmod 660 ${DRUPAL_ROOT}/sites/*/*settings*php'
