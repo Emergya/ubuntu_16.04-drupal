@@ -2,19 +2,24 @@
 
 You will wonder, yet another drupal docker container?
 
-And our answer is 'yes'; because we craft our own docker containers with love listening to our drupal developers since they are the ones who use them everyday.
+And our answer is 'yes', a container for developers. We craft it with love listening to our drupal developers suggerencies; since they are the ones who use them everyday.
+
+This container is not intended for production, but it could.
 
 ## So, what's this about?
 
-This a drupal-able docker container based on the latest Ubuntu LTS (Long Time Support) release (ubuntu-16.04) that pretends to be developer friendly and need nothing but [docker-composer](https://docs.docker.com/compose/) to start a containerized local development and use your favorite IDE in your own desktop to modify the code.
+This a drupal-able docker container based on the latest Ubuntu LTS (Long Time Support) release (ubuntu-16.04) that pretends to be developer friendly and make easy the task of starting a containerized local development.
 
-This means you are supposed to run any of the supported drupal versions just by:
+You are supposed to run any of the supported drupal versions just by:
 
 * Cloning/Forking this repository
 * Either:
-  * Copying a drupal source code into a 'src' in project's dir
+  * Copying a drupal source code into a 'src' dir inside project's dir
 * Or:
-  * Perform a 'composer create-project' to download drupal's source code
+  * Perform a 'composer create-project' to download a fresh copy of drupal's source code
+* Start the enviroment
+
+Then, since drupal's code is bind mounted inside the container, you can use your favorite IDE to modify the code from outside and run composer/drush/drupal console within the container if needed.
   
 # Requirements
 
@@ -29,15 +34,15 @@ export DOCKER_IMAGE="emergya/automated-ubuntu_16.04-drupal:latest"
 
 export DEVELOPER_USER=$(basename $HOME)
 export PROJECT_NAME="my-drupal"
-export PROJECT_DIR="$PWD"
-export DATA_DIR="$PROJECT_DIR/data"
-export SSH_CREDENTIALS_DIR=~/.ssh
+export DRUPAL_DEFAULT_SITENAME="$PROJECT_NAME"
 export ENVIRONMENT="dev"
 export ENV_VHOST="$ENVIRONMENT-$PROJECT_NAME.example.com"
 
-export DRUPAL_DEFAULT_SITENAME="$PROJECT_NAME"
+export PROJECT_DIR="$PWD"           # dir where the fork is placed
+export DATA_DIR="$PROJECT_DIR/data" # dir where docker volumes are stored
+export SSH_CREDENTIALS_DIR=~/.ssh   # this one is used to share you ssh credentials with the containerized git
 
-sed -i "s|_PROJECT_NAME_.emergyalabs.com|$ENV_VHOST|g" *compose.yml
+sed -i "s|_PROJECT_NAME_.emergyalabs.com|$ENV_VHOST|g" *compose.yml # renames compose service name to use your microservice FQDN
 ```
 * Setup drupal source
   * Either:
@@ -47,7 +52,7 @@ sed -i "s|_PROJECT_NAME_.emergyalabs.com|$ENV_VHOST|g" *compose.yml
 docker-compose -f dev-compose.yml exec $ENV_VHOST \
   /bin/bash -c 'cd /var/www/html; composer install; chown -R $DEVELOPER_USER:www-data /var/www/html'  
 ```
-   * If you want a database to be deployed as initial database, you can place it in '$PROJECT_DIR/data/initial.sql'. Note that it must include the 'CREATE DATABASE' and 'USE $database' statements at the begining and that you must set the following enviroment variable also:
+    * If you also want a database to be deployed as initial database, you can place it in '$PROJECT_DIR/data/initial.sql'. Note that it must include the 'CREATE DATABASE' and 'USE $database' statements at the begining and that you must set the following enviroment variable also:
 ```
 export MYSQL_DBNAME="your-db-name"
 ```
@@ -81,7 +86,7 @@ echo "Save \$DRUPAL_SALT for future deploys since db is seeded with it: $DRUPAL_
 docker-compose -f $ENVIRONMENT-compose.yml up -d
 ```
 
-If you are performing a fresh installation (no database) you will need to setup the correct permissions for the automatically generated 'settings.php' files in order the installer to work:
+If you are performing a fresh installation (no database) you will need to setup the correct permissions for the programatically (based on container's environment variables) generated 'settings.php' files in order the installer to work:
 ```
 docker-compose -f $ENVIRONMENT-compose.yml exec $ENV_VHOST /bin/bash --login -c 'chmod 660 ${DRUPAL_ROOT}/sites/*/*settings*php'
 ```
@@ -112,23 +117,19 @@ sudo rm -rf data
 
 # FAQ
 
-* Settings are dinamically generated from 'assets/var/www/html/*tpl' so you can:
-  * Modify those templates
-  * Add some for your different environments in $DRUPAL_ROOT/sites/*/*tpl-$ENVIRONMENT
+* Settings files are dinamically generated from templates on container startup so you can:
+  * Add a generic "$DRUPAL_ROOT/sites/default/default.settings.php.tpl"
+  * Add some templates for your different environments in "$DRUPAL_ROOT/sites/*/*tpl-$ENVIRONMENT" like:
+    * $DRUPAL_ROOT/sites/default/settings.local.php.tpl-$ENVIRONMENT
+  * Modify default container templates at 'assets/var/www/html/*tpl' 
+  
 
-# Dummy notes
+# TODO: sort braindumped notes
 
-
-
-    or copying the src as an asset of the docker image in 'assets/var/www/html' and rebuilding the docker image so the resulting image include your complete application and php dependencies (as in Dockerfile we run 'compose install') that will be synchronized on container startup (in production we should use the produced by a CI pipeline image and use the code is inside; you can change the environment divergence)
-```
-rsync -Pa src/ assets/var/www/html
-```
-    * Note you will be adding 'data/' dir; where data (docker volumes like /var/lib/mysql) is stored
-    * Note you are using a monolithic container that encapsulates everything, for running it on production, you might start thinking about a decoupled mysql server that is there just to be developer friendly
-      * Container will disable the local mysql service if MYSQL_ config is provided via docker environment :)
-      * You can provide an inital drupal db by replacing assets/initial.sql
-
-  * It's based on our own ubuntu LAMP image (ubuntu-16.04-apache-php-mysql) so it follows the same standards for the container src layout
-
-We perform any of these task as automated project-tasks by using baids
+* Note you are using a monolithic container that encapsulates everything, for running it on production, you might start thinking about a decoupled mysql server that is there just to be developer friendly
+  * Container will disable the local mysql service if MYSQL_ config is provided via docker environment :)
+  * You can provide an inital drupal db by replacing assets/initial.sql
+* In production we should use the produced by a CI pipeline image and use the code is inside; you can change the environment divergence)
+  * Copying the src as an asset of the docker image in 'assets/var/www/html' and rebuilding the docker image will result in a monolithic image that includes your complete application and php dependencies (as in Dockerfile we run 'compose install' into '/var/www/html' where src is mounted).ATM dependencies will be synchronized on container startup from 'assets' to '/var/www/html', but source code will not.
+* Note you will be adding 'data/' dir where data (docker volumes like /var/lib/mysql) is stored to your docker build context
+* We perform any of these task as automated project-tasks by using baids
