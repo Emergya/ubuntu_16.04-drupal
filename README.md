@@ -44,20 +44,18 @@ export SSH_CREDENTIALS_DIR=~/.ssh   # this one is used to share you ssh credenti
 
 sed -i "s|_PROJECT_NAME_.emergyalabs.com|$ENV_VHOST|g" *compose.yml # renames compose service name to use your microservice FQDN
 ```
-* Setup drupal source
-  * Either:
-    * Copy your drupal source code into a 'src' dir in project's dir
-    * Install your drupal's composer depends using the containerized 'composer' binary with this snippet:
+* Either setup your own drupal source by:
+  * Copying your drupal source code into a 'src' dir in project's dir
+  * Installing your drupal's composer depends using the containerized 'composer' binary with this snippet:
 ```
 docker-compose -f dev-compose.yml exec $ENV_VHOST \
   /bin/bash -c 'cd /var/www/html; composer install; chown -R $DEVELOPER_USER:www-data /var/www/html'  
 ```
-    * If you also want a database to be deployed as initial database, you can place it in '$PROJECT_DIR/data/initial.sql'. Note that it must include the 'CREATE DATABASE' and 'USE $database' statements at the begining and that you must set the following enviroment variable also:
+  * If you also want a database to be deployed as initial database, you can place it in '$PROJECT_DIR/data/initial.sql'. Note that, because the dump is imported, it must include the 'CREATE DATABASE' and 'USE $database' statements at the begining and while running the container, you will need to set the following enviroment variable in order to render 'settings.php' correctly:
 ```
 export MYSQL_DBNAME="your-db-name"
 ```
-  * Or:
-    * Download a fresh "drupal-$VERSION" source copy using 'composer create-project' with this snippet:
+* Or download a fresh "drupal-$VERSION" source copy using 'composer create-project' with this snippet:
 ```
 # [un]comment correspondingly
 # Drupal 7
@@ -86,11 +84,12 @@ echo "Save \$DRUPAL_SALT for future deploys since db is seeded with it: $DRUPAL_
 docker-compose -f $ENVIRONMENT-compose.yml up -d
 ```
 
-If you are performing a fresh installation (no database) you will need to setup the correct permissions for the programatically (based on container's environment variables) generated 'settings.php' files in order the installer to work:
+Note that if you are performing a fresh drupal installation (when no 'data/initial.sql' database is provided), you will need to set the correct permissions for the programatically (based on container's environment variables) generated 'settings.php'.
+You can do it with this snippet:
 ```
 docker-compose -f $ENVIRONMENT-compose.yml exec $ENV_VHOST /bin/bash --login -c 'chmod 660 ${DRUPAL_ROOT}/sites/*/*settings*php'
 ```
-* Once installed, you can revert it (althouth restarting the container will perform a 'fix-permissions.sh' that fixes it):
+Once installed, you can revert it (restarting the container will perform a 'fix-permissions.sh' that fixes it):
 ```
 docker-compose -f $ENVIRONMENT-compose.yml exec $ENV_VHOST /bin/bash --login -c 'chmod 640 ${DRUPAL_ROOT}/sites/*/*settings*php'
 ```
@@ -117,11 +116,12 @@ sudo rm -rf data
 
 # FAQ
 
-* Settings files are dinamically generated from templates on container startup so you can:
-  * Add a generic "$DRUPAL_ROOT/sites/default/default.settings.php.tpl"
-  * Add some templates for your different environments in "$DRUPAL_ROOT/sites/*/*tpl-$ENVIRONMENT" like:
-    * $DRUPAL_ROOT/sites/default/settings.local.php.tpl-$ENVIRONMENT
-  * Modify default container templates at 'assets/var/www/html/*tpl' 
+* Where did the 'settings.php' files come from?
+  * Settings files are dinamically generated from templates on container startup so you can:
+    * Add a generic "$DRUPAL_ROOT/sites/default/default.settings.php.tpl"
+    * Add some templates for your different environments in "$DRUPAL_ROOT/sites/*/*tpl-$ENVIRONMENT" like:
+      * $DRUPAL_ROOT/sites/default/settings.local.php.tpl-$ENVIRONMENT
+    * Modify default container templates at 'assets/var/www/html/*tpl' 
   
 
 # TODO: sort braindumped notes
