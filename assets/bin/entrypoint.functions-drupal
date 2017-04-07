@@ -33,12 +33,18 @@ function setup-drupal() {
       else
         export DRUPAL_ROOT
       fi
-      # sync composer-installed files/depends:
-      for dir in drush/contrib vendor web/core web/modules/contrib web/themes/contrib web/profiles/contrib web/libraries
-      do
-        rsync -Pav /assets/${DRUPAL_ROOT}/../$dir/ ${DRUPAL_ROOT}/../$dir/
-        chown -R ${DEVELOPER_USER}:www-data ${DRUPAL_ROOT}/../$dir
-      done
+      # if composer.json is the same that the one that was used when build the docker image: sync src depends from image
+      # else, do nothing, since it would overwrite/break development depends
+      cmp "/assets/var/www/html/composer.json" "/var/www/html/composer.json"
+      if [ $? -eq 0 ]
+      then
+        # sync composer-installed files/depends:
+        for dir in drush/contrib vendor web/core web/modules/contrib web/themes/contrib web/profiles/contrib web/libraries
+        do
+          rsync -Pav /assets/${DRUPAL_ROOT}/../$dir/ ${DRUPAL_ROOT}/../$dir/
+          chown -R ${DEVELOPER_USER}:www-data ${DRUPAL_ROOT}/../$dir
+        done
+      fi
       
     ;;
   esac
