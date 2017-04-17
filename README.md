@@ -8,7 +8,7 @@ This container is not intended for production, but it could.
 
 ## So, what's this about?
 
-This a drupal-able docker container based on the latest Ubuntu LTS (Long Time Support, ubuntu-16.04) release that pretends to be developer friendly and make easy the task of starting a containerized local development.
+This a drupal-able docker container based on the latest Ubuntu LTS release (Long Time Support, ubuntu-16.04) that pretends to be developer friendly and make easy the task of starting a local, containerized development.
 
 You are supposed to run any of the supported drupal versions just by:
 
@@ -80,23 +80,28 @@ echo "Save \$DRUPAL_SALT for future deploys since db is seeded with it: $DRUPAL_
 docker-compose -f $ENVIRONMENT-compose.yml up -d
 ```
 
-NOTE: if you want a database to be deployed as initial database, you can place it in '$PROJECT_DIR/data/initial.sql'. Note that, because the dump is imported, it must include the 'CREATE DATABASE' and 'USE $database' statements at the begining and while running the container, you will need to set the following enviroment variable in order to render 'settings.php' correctly:
+### Setup considerations
+
+* If you want a database to be deployed as initial database, you can place it in '$PROJECT_DIR/data/initial.sql'.
+Note also that, because the dump is programatically imported by container's entrypoint and it does have a predefined $MYSQL_DBNAME, the dump must include the 'CREATE DATABASE' and 'USE $MYSQL_DBNAME' statements at the begining. 
+While running the environment, you will also need to set this variable in order to render 'settings.php' correctly:
 ```
 export MYSQL_DBNAME="your-db-name"
 ```
-
-If you are performing a fresh drupal installation (when no 'data/initial.sql' database is provided), you will need to set the correct permissions for the programatically (based on container's environment variables) generated 'settings.php'.
+* If you are performing a fresh drupal installation (when no 'data/initial.sql' database is provided), you will need to set the correct permissions for the programatically (based on container's environment variables) generated 'settings.php'.
 You can do it with this snippet:
 ```
 docker-compose -f $ENVIRONMENT-compose.yml exec $ENV_VHOST /bin/bash --login -c 'chmod 660 ${DRUPAL_ROOT}/sites/*/*settings*php'
 ```
-Once installed, you can revert it (restarting the container will perform a 'fix-permissions.sh' that fixes it):
+  * Once installed, you can revert it (restarting the container will also perform a [fix-permissions.sh](https://www.drupal.org/project/file_permissions) that fixes it):
 ```
 docker-compose -f $ENVIRONMENT-compose.yml exec $ENV_VHOST /bin/bash --login -c 'chmod 640 ${DRUPAL_ROOT}/sites/*/*settings*php'
 ```
 
 # Build your own custom docker image
 
+* Modify 'Dockerfile' or include any asset on the 'assets' directory (they will be included in container's root filesystem following the same directories hierarchy)
+* Build the image accordingly:
 ```
 ## Drupal 7
 export DRUPAL_VERSION=7
@@ -130,7 +135,7 @@ sudo rm -rf data
 * Note you are using a monolithic container that encapsulates everything, for running it on production, you might start thinking about a decoupled mysql server that is there just to be developer friendly
   * Container will disable the local mysql service if MYSQL_ config is provided via docker environment :)
   * You can provide an inital drupal db by replacing assets/initial.sql
-* In production we should use the produced by a CI pipeline image and use the code is inside; you can change the environment divergence)
+* In production we should use the container produced by a CI pipeline image and use the source code included inside of that image; you can change the environment divergence in the entrypoint's defined function _set-environment-divergences_
   * Copying the src as an asset of the docker image in 'assets/var/www/html' and rebuilding the docker image will result in a monolithic image that includes your complete application and php dependencies (as in Dockerfile we run 'compose install' into '/var/www/html' where src is mounted).ATM dependencies will be synchronized on container startup from 'assets' to '/var/www/html', but source code will not.
-* Note you will be adding 'data/' dir where data (docker volumes like /var/lib/mysql) is stored to your docker build context
-* We perform any of these task as automated project-tasks by using baids
+  * Note that building the image will be adding 'data/' dir to the docker image (where data like docker volumes like /var/lib/mysql) is stored since it's located under the docker build context. And we don't want data to be included in a docker-image.
+* We perform many of these task as automated project-tasks by using baids
