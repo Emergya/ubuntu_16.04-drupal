@@ -1,3 +1,19 @@
+![build passing](https://img.shields.io/docker/automated/emergya/automated-ubuntu_16.04-drupal.svg)
+
+# ToC (Table of Contents)
+
+   * [Rationale. YADDC?](#rationale-yaddc)
+      * [So, what's this about?](#so-whats-this-about)
+   * [Requirements](#requirements)
+   * [Start a drupal development](#start-a-drupal-development)
+      * [Setup considerations](#setup-considerations)
+   * [Build your own custom docker image](#build-your-own-custom-docker-image)
+   * [Destroy docker enviroment](#destroy-docker-enviroment)
+   * [FAQ](#faq)
+   * [Contributing](#contributing)
+   * [Licence and Authors](#licence-and-authors)
+   * [TODO: sort braindumped notes](#todo-sort-braindumped-notes)
+
 # Rationale. YADDC?
 
 You will wonder, yet another drupal docker container?
