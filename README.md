@@ -209,12 +209,12 @@ Copyright © 2017 Emergya < http://www.emergya.com >
     The license text is available at http://www.osor.eu/eupl and the attached PDF
 
 Authors:
-* [Andrés Muñoz Vera](https://github.com/pellejador) <amunoz@emergya.com> 
-* [Antonio Rodriguez Robledo](https://github.com/yocreoquesi) <arodriguez@emergya.com>
-* [Alejandro Romo Astorga](https://github.com/aromo) <aromo@emergya.com>
-* [Diego Martín Sanchez](https://github.com/dmsgago) <dmsanchez@emergya.com>
-* [Héctor Fiel Martín](https://github.com/hfiel) <hfiel@emergya.com>
-* [Roberto C. Morano](https://github.com/rcmorano) <rcmorano@emergya.com>
+* [Andrés Muñoz Vera](https://github.com/pellejador) (<amunoz@emergya.com>)
+* [Antonio Rodriguez Robledo](https://github.com/yocreoquesi) (<arodriguez@emergya.com>)
+* [Alejandro Romo Astorga](https://github.com/aromo) (<aromo@emergya.com>)
+* [Diego Martín Sanchez](https://github.com/dmsgago) (<dmsanchez@emergya.com>)
+* [Héctor Fiel Martín](https://github.com/hfiel) (<hfiel@emergya.com>)
+* [Roberto C. Morano](https://github.com/rcmorano) (<rcmorano@emergya.com>)
 
 # TODO: sort braindumped notes
 
