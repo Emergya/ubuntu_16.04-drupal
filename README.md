@@ -9,6 +9,7 @@
       * [Setup considerations](#setup-considerations)
    * [Build your own custom docker image](#build-your-own-custom-docker-image)
    * [Destroy docker enviroment](#destroy-docker-enviroment)
+   * [Container's assets](#assets)
    * [FAQ](#faq)
    * [Contributing](#contributing)
    * [Licence and Authors](#licence-and-authors)
@@ -136,6 +137,39 @@ export ENVIRONMENT="dev"
 cd $PROJECT_DIR
 docker-compose -f $ENVIRONMENT-compose.yml down -v
 sudo rm -rf data
+```
+
+# Assets
+
+```
+assets/
+├── bin
+│   ├── entrypoint-drupal
+│   ├── entrypoint.functions-drupal
+│   ├── fix-permissions.sh
+│   └── upstream-fix-permissions.sh
+├── etc
+│   ├── apache2
+│   │   └── sites-enabled
+│   │       └── 000-default.conf
+│   ├── drush
+│   │   └── aliases.drushrc.php
+│   ├── mysql
+│   │   └── my.cnf
+│   └── php
+│       └── 7.0
+│           └── apache2
+│               ├── conf.d
+│               │   └── 20-xdebug.ini
+│               └── php.ini
+├── initial.sql
+└── var
+    └── www
+        └── html
+            ├── composer.json-drupal-project.tpl
+            ├── default.settings.php.tpl
+            ├── settings.local.php.tpl-drupal-7
+            └── settings.local.php.tpl-drupal-8
 ```
 
 # FAQ
