@@ -141,6 +141,7 @@ sudo rm -rf data
 
 # Assets
 
+* It inherits [ubuntu_16.04-apache-php-mysql upstream's assets](https://github.com/Emergya/ubuntu_16.04-apache-php-mysql/blob/master/README.md#assets) and overwrites some:
 ```
 assets/
 ├── bin
