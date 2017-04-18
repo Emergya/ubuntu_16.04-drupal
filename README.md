@@ -59,7 +59,7 @@ export PROJECT_DIR="$PWD"           # dir where the fork is placed
 export DATA_DIR="$PROJECT_DIR/data" # dir where docker volumes are stored
 export SSH_CREDENTIALS_DIR=~/.ssh   # this one is used to share you ssh credentials with the containerized git
 
-sed -i "s|_PROJECT_NAME_.emergyalabs.com|$ENV_VHOST|g" *compose.yml # renames compose service name to use your microservice FQDN
+sed -i "s|$ENVIRONMENT-_PROJECT_NAME_.emergyalabs.com|$ENV_VHOST|g" $ENVIRONMENT-compose.yml # renames compose service name to use your microservice FQDN
 ```
 * Either setup your own drupal source by:
   * Copying your drupal source code into a 'src' dir in project's dir
