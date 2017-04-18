@@ -86,7 +86,7 @@ docker-compose -f $ENVIRONMENT-compose.yml run --rm --entrypoint /bin/bash $ENV_
       cd /tmp; yes | composer create-project drupal-composer/drupal-project:~$DRUPAL_VERSION --stability dev; \
       rsync -a /tmp/drupal-project/ /var/www/html/; \
       chown -R $(id -u):www-data /var/www/html; \
-      chmod 770 /var/www/html"
+      chmod 770 /var/www/html" $ENV_VHOST
 ```
 * Generate a random drupal's salt (and save it, since database will be seeded with it)
 ```
