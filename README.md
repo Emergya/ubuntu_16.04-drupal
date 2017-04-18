@@ -65,8 +65,9 @@ sed -i "s|$ENVIRONMENT-_PROJECT_NAME_.emergyalabs.com|$ENV_VHOST|g" $ENVIRONMENT
   * Copying your drupal source code into a 'src' dir in project's dir
   * Installing your drupal's composer depends using the containerized 'composer' binary with this snippet:
 ```
-docker-compose -f dev-compose.yml run --rm $ENV_VHOST \
-  /bin/bash -c 'cd /var/www/html; composer install; chown -R $DEVELOPER_USER:www-data /var/www/html'  
+docker-compose -f dev-compose.yml run --rm \
+  --entrypoint "/bin/bash -c 'cd /var/www/html; composer install; chown -R $DEVELOPER_USER:www-data /var/www/html'" \
+  $ENV_VHOST
 ```
 * Or download a fresh "drupal-$VERSION" source copy using 'composer create-project' with this snippet:
 ```
