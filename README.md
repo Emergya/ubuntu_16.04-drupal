@@ -66,7 +66,7 @@ sed -i "s|$ENVIRONMENT-_PROJECT_NAME_.emergyalabs.com|$ENV_VHOST|g" $ENVIRONMENT
   * Installing your drupal's composer depends using the containerized 'composer' binary with this snippet:
 ```
 docker-compose -f dev-compose.yml run --rm \
-  --entrypoint "/bin/bash -c 'cd /var/www/html; composer install; chown -R $DEVELOPER_USER:www-data /var/www/html'" \
+  --entrypoint "/bin/bash -c 'cd /var/www/html; composer install; chown -R $(id -u):www-data /var/www/html'" \
   $ENV_VHOST
 ```
 * Or download a fresh "drupal-$VERSION" source copy using 'composer create-project' with this snippet:
