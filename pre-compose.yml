@@ -15,12 +15,16 @@ services:
       - ENVIRONMENT=${ENVIRONMENT}
       - ENV_VHOST=${ENV_VHOST}
       - VIRTUAL_HOSTS=${VIRTUAL_HOSTS}
-      - MYSQL_HOST=${MYSQL_HOST}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASS=${MYSQL_PASS}
-      - MYSQL_DBNAME=${MYSQL_DBNAME}
+      - MYSQL_HOST=${MYSQL_HOST} # defaults to 'localhost'
+      - MYSQL_USER=${MYSQL_USER} # defaults to 'root'
+      - MYSQL_PASS=${MYSQL_PASS} # defaults to ''
+      - MYSQL_DBNAME=${MYSQL_DBNAME} # defaults to '$PROJECT_NAME' or '_PROJECT_NAME_'
       - MEMCACHED_HOST=${MEMCACHED_HOST}
       - MEMCACHED_PORT=${MEMCACHED_PORT}
+      - DRUPAL_VERSION=${DRUPAL_VERSION}
+      - DRUPAL_ROOT=${DRUPAL_ROOT}
+      - DRUPAL_DEFAULT_SITENAME=${PROJECT_NAME}
+      - DRUPAL_SALT=${DRUPAL_SALT}
     volumes:
       - ${DATA_DIR}/dot-drush:${HOME}/.drush
       - ${SSH_CREDENTIALS_DIR}:${SSH_CREDENTIALS_DIR}
