@@ -1,4 +1,4 @@
-FROM emergya/ubuntu_16.04-apache-php-mysql:1bb76c4-201704051337
+FROM emergya/ubuntu_16.04-apache-php-mysql:201704232319-95dd796
 
 ENV BUILD_TIMESTAMP 201704051337
 ENV DRUSH_VERSION 8.1.10
