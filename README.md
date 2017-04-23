@@ -88,7 +88,7 @@ docker-compose -f $ENVIRONMENT-compose.yml run --rm --entrypoint /bin/bash $ENV_
       chown -R $(id -u):www-data /var/www/html; \
       chmod 770 /var/www/html" $ENV_VHOST
 ```
-* Generate a random drupal's salt (and save it, since database will be seeded with it)
+* Generate a random drupal's salt and save it. Since database will be seeded with it, setting it on your '$ENVIRONMENT-compose.yml' as environment variable is a good idea (but committing it is not :):
 ```
 export DRUPAL_SALT=$(base64 /dev/urandom | dd bs=74 count=1 status=none)
 echo "Save \$DRUPAL_SALT for future deploys since db is seeded with it: $DRUPAL_SALT"
