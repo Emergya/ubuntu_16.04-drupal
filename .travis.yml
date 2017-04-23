@@ -1,0 +1,25 @@
+sudo: required
+
+language: bash
+
+services:
+  - docker
+
+env:
+  - DOCKER_IMAGE=emergya/ubuntu_16.04-drupal
+
+script:
+  - docker build -t $DOCKER_IMAGE .
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+      DOCKER_IMAGE_COMMIT=$(git log -1 --pretty=format:'%h');
+      DOCKER_IMAGE_TIMESTAMP=$(docker inspect -f '{{ .Created }}' ${DOCKER_IMAGE}|awk -F':' '{print $1$2}'|sed 's%-\|T%%g');
+      docker tag $DOCKER_IMAGE:latest $DOCKER_IMAGE:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
+      docker push $DOCKER_IMAGE:latest;
+      docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
+    fi
+
+email:
+  - sistemas@emergya.com
