@@ -7,6 +7,15 @@ ENV DRUPAL_ROOT /var/www/html/web
 ARG DRUPAL_VERSION=8
 ARG DRUPAL_ROOT=/var/www/html/web
 
+# Install uploadprogress php extension from a php-7-supported src
+RUN /bin/bash -c 'cd /tmp/ && \
+      git clone https://github.com/Jan-E/uploadprogress.git && \
+      cd uploadprogress && \
+      phpize && \
+      ./configure && make && make install && \
+      echo "extension=uploadprogress.so" > /etc/php/7.0/mods-available/uploadprogress.ini && \
+      phpenmod uploadprogress'
+
 ## Install Drush.
 RUN composer global require drush/drush:$DRUSH_VERSION && \
     mv $HOME/.composer /usr/local/share/composer && \
