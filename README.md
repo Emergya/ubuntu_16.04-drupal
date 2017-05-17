@@ -20,13 +20,13 @@
 
 You will wonder, yet another drupal docker container?
 
-And our answer is 'yes', a container for developers. We craft it with love listening to our drupal developers suggestions; since they are the ones who use them everyday.
+And our answer is 'yes', a container for developers. We craft it with love listening to our drupal developers suggestions; since they are the ones who use it everyday.
 
 This container is not intended for production, but it could.
 
 ## So, what's this about?
 
-This a drupal-able docker container based on the latest Ubuntu LTS release (Long Time Support, ubuntu-16.04) that pretends to be developer friendly and make easy the task of starting a local, containerized development.
+This a drupal-able docker container based on the latest Ubuntu LTS release (Long Time Support, ubuntu-16.04) that pretends to be developer friendly and makes easy the task of starting a local, containerized development.
 
 You are supposed to run any of the supported drupal versions just by:
 
