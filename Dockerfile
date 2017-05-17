@@ -1,11 +1,22 @@
 FROM emergya/ubuntu_16.04-apache-php-mysql:201705161200-92f2980
 
-ENV BUILD_TIMESTAMP 201705161343
-ENV DRUSH_VERSION 8.1.10
-ENV DRUPAL_VERSION 8
-ENV DRUPAL_ROOT /var/www/html/web
+#================================
+# Build arguments
+#================================
+
+ARG DRUSH_VERSION=8.1.10
 ARG DRUPAL_VERSION=8
 ARG DRUPAL_ROOT=/var/www/html/web
+
+#================================
+# Env arguments
+#================================
+
+ENV BUILD_TIMESTAMP 201705161343
+ENV DRUSH_VERSION ${DRUSH_VERSION}
+ENV DRUPAL_VERSION ${DRUPAL_VERSION}
+ENV DRUPAL_ROOT ${DRUPAL_ROOT}
+
 
 # Install uploadprogress php extension from a php-7-supported src
 RUN /bin/bash -c 'cd /tmp/ && \
