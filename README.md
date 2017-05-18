@@ -1,4 +1,5 @@
 * [hub.docker.com (automated build):](https://hub.docker.com/r/emergya/automated-ubuntu_16.04-drupal) ![build passing](https://img.shields.io/docker/automated/emergya/automated-ubuntu_16.04-drupal.svg)
+[![](https://images.microbadger.com/badges/image/emergya/automated-ubuntu_16.04-drupal.svg)](https://hub.docker.com/r/emergya/automated-ubuntu_16.04-drupal/)
 * [travis-ci.org (timestamped-commit tag):](https://hub.docker.com/r/emergya/automated-ubuntu_16.04-drupal/) [![Build Status](https://travis-ci.org/Emergya/automated-ubuntu_16.04-drupal.svg?branch=master)](https://travis-ci.org/Emergya/automated-ubuntu_16.04-drupal)
 
 # ToC (Table of Contents)
