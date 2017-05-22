@@ -31,8 +31,8 @@ services:
       - ${PROJECT_DIR}:${PROJECT_DIR}
       - ${PROJECT_DIR}/src:/var/www/html
       - ${DATA_DIR}:/data
-      - /opt/data/docker-containers-volumes/${DRUPAL_ROOT}/sites/default/private:${DRUPAL_ROOT}/sites/default/private
-      - /opt/data/docker-containers-volumes/${DRUPAL_ROOT}/sites/default/files:${DRUPAL_ROOT}/sites/default/files
-      - /opt/data/docker-containers-volumes/var/log/apache2:/var/log/apache2
-      - /opt/data/docker-containers-volumes/etc/apache2/htpasswd/env-htpasswd:/etc/apache2/htpasswd/env-htpasswd
-      - /opt/data/docker-containers-volumes/var/lib/mysql:/var/lib/mysql
+      - ${DATA_DIR}/docker-containers-volumes/${DRUPAL_ROOT}/sites/default/private:${DRUPAL_ROOT}/sites/default/private
+      - ${DATA_DIR}/docker-containers-volumes/${DRUPAL_ROOT}/sites/default/files:${DRUPAL_ROOT}/sites/default/files
+      - ${DATA_DIR}/docker-containers-volumes/var/log/apache2:/var/log/apache2
+      - ${DATA_DIR}/docker-containers-volumes/etc/apache2/htpasswd/env-htpasswd:/etc/apache2/htpasswd/env-htpasswd
+      - ${DATA_DIR}/docker-containers-volumes/var/lib/mysql:/var/lib/mysql
