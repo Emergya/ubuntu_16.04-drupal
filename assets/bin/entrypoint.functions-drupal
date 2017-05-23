@@ -59,6 +59,7 @@ function setup-drupal() {
       cp -a /assets/var/www/html/default.settings.php.tpl ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.php
     fi
     chown $DEVELOPER_USER:www-data ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.php
+    # drupal 7 tries to load 'default.settings.php' and not 'settings.php', so we use the settings.php as default.settings.php
     if [ "$DRUPAL_VERSION" == "7" ]
     then
       mv ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.php ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/default.settings.php
