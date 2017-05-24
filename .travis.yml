@@ -21,5 +21,6 @@ after_success:
       docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TIMESTAMP-$DOCKER_IMAGE_COMMIT;
     fi
 
-email:
-  - sistemas@emergya.com
+notifications:
+  email:
+    - sistemas@emergya.com
