@@ -179,7 +179,7 @@ assets/
 # FAQ
 
 * Where did the 'settings.php' files come from?
-  * Settings files are dinamically generated from templates on container startup so you can:
+  * Settings files are dinamically generated from templates filled in with environment variables on container startup, so you can:
     * Add a generic "$DRUPAL_ROOT/sites/default/default.settings.php.tpl"
     * Add some templates for your different environments in "$DRUPAL_ROOT/sites/*/*tpl-$ENVIRONMENT" like:
       * $DRUPAL_ROOT/sites/default/settings.local.php.tpl-$ENVIRONMENT
