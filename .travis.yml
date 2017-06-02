@@ -23,4 +23,7 @@ after_success:
 
 notifications:
   email:
-    - sistemas@emergya.com
+    recipients:
+      - sistemas@emergya.com
+    on_success: always
+    on_failure: always
