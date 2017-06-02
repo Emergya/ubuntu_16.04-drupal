@@ -24,6 +24,6 @@ after_success:
 notifications:
   email:
     recipients:
-      - sistemas@emergya.com
+      - emergya-integration-github@emergya.com
     on_success: always
     on_failure: always
