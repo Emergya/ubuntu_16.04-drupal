@@ -633,7 +633,7 @@ if ($settings['hash_salt']) {
  * configuration values in settings.php will not fire any of the configuration
  * change events.
  */
-$config['system.site']['name'] = '_DRUPAL_DEFAULT_SITENAME_';
+# $config['system.site']['name'] = '_DRUPAL_DEFAULT_SITENAME_';
 # $config['system.theme']['default'] = 'stark';
 # $config['user.settings']['anonymous'] = 'Visitor';
 
