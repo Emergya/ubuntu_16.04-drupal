@@ -35,7 +35,7 @@ function setup-drupal() {
       fi
       # if composer.json is the same that the one that was used when build the docker image: sync src depends from image
       # else, do nothing, since it would overwrite/break development depends
-      cmp "/assets/var/www/html/composer.json" "/var/www/html/composer.json"
+      cmp "/assets${DRUPAL_ROOT}/../composer.json" "${DRUPAL_ROOT}/../composer.json"
       if [ $? -eq 0 ]
       then
         # sync composer-installed files/depends:
