@@ -11,6 +11,7 @@ function setup-drush(){
   do
     sed -i 's|_DRUPAL_ROOT_|'${DRUPAL_ROOT}'|g' /etc/drush/$DRUSH_ALIASES_FILE
     sed -i 's|_PROJECT_NAME_|'${PROJECT_NAME}'|g' /etc/drush/$DRUSH_ALIASES_FILE
+    sed -i 's|_SSH_USER_|'${DEVELOPER_USER}'|g' /etc/drush/$DRUSH_ALIASES_FILE
   done
 
 }
