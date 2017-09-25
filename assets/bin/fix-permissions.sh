@@ -78,6 +78,7 @@ PASS_THRU_PATHS="$DRUPAL_ROOT $DRUPAL_ROOT/sites $DRUPAL_ROOT/sites/default $DRU
   find ${DRUPAL_ROOT}/../config -type d | xargs chmod 755 ; \
   find ${DRUPAL_ROOT}/../config -type f | xargs chmod 644 ; \
   chmod 775 ${DRUPAL_ROOT}/sites/*/{files,private}; \
+  chmod -R 730 ${DRUPAL_ROOT}/sites/*/private/*; \
   chown ${DEVELOPER_USER}:www-data /var/www/html; \
 for dir in $PASS_THRU_PATHS; \
 do \
