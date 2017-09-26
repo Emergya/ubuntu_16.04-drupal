@@ -1,4 +1,4 @@
-FROM emergya/ubuntu_16.04-apache-php-mysql:201706061202-baad6e1
+FROM emergya/ubuntu_16.04-apache-php-mysql:201709260725-4d1fc77
 
 #================================
 # Build arguments
