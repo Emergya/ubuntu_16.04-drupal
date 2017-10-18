@@ -46,7 +46,10 @@ Then, since drupal's code is bind mounted inside the container, you can use your
 
 # Start a drupal development
 
-* Fork project
+* Fork and clone this project:
+```
+git clone https://github.com/Emergya/ubuntu_16.04-drupal.git my-drupal
+```
 * Setup your enviroment variables accordingly:
 ```
 export DOCKER_IMAGE="emergya/automated-ubuntu_16.04-drupal:latest"
