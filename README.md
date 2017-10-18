@@ -49,6 +49,7 @@ Then, since drupal's code is bind mounted inside the container, you can use your
 * Fork and clone this project:
 ```
 git clone https://github.com/Emergya/ubuntu_16.04-drupal.git my-drupal
+cd my-drupal
 ```
 * Setup your enviroment variables accordingly:
 ```
