@@ -53,7 +53,6 @@ export DOCKER_IMAGE="emergya/automated-ubuntu_16.04-drupal:latest"
 
 export DEVELOPER_USER=$(basename $HOME)
 export PROJECT_NAME="my-drupal"
-export DRUPAL_DEFAULT_SITENAME="$PROJECT_NAME"
 export ENVIRONMENT="dev"
 export ENV_VHOST="$ENVIRONMENT-$PROJECT_NAME.example.com"
 
