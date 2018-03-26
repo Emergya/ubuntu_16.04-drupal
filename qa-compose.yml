@@ -2,6 +2,7 @@ version: '2'
 services:
   qa-_PROJECT_NAME_.emergyalabs.com:
     image: ${DOCKER_IMAGE}
+    restart: unless-stopped
     ports:
       - "22122:22"
     environment:
