@@ -11,6 +11,7 @@ services:
       - ENVIRONMENT=${ENVIRONMENT}
       - ENV_VHOST=${ENV_VHOST}
       - VIRTUAL_HOSTS=${VIRTUAL_HOSTS}
+      - SSH_USER=${SSH_USER}
       - MYSQL_HOST=${MYSQL_HOST} # defaults to 'localhost'
       - MYSQL_USER=${MYSQL_USER} # defaults to 'root'
       - MYSQL_PASS=${MYSQL_PASS} # defaults to ''

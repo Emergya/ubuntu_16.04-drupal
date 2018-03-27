@@ -18,6 +18,7 @@ services:
       - VIRTUAL_HOSTS=${VIRTUAL_HOSTS}
       - VIRTUAL_HOST=http://${ENV_VHOST}
       - EXCLUDE_PORTS=22
+      - SSH_USER=${SSH_USER}
       - MYSQL_HOST=${MYSQL_HOST} # defaults to 'localhost'
       - MYSQL_USER=${MYSQL_USER} # defaults to 'root'
       - MYSQL_PASS=${MYSQL_PASS} # defaults to ''
