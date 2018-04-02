@@ -71,7 +71,19 @@ function setup-drupal() {
     else 
       cp -a /assets/var/www/html/default.settings.php.tpl ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.php
     fi
+
+    if [ ! -z "$DRUPAL_TRUSTED_HOST_PATTERNS" ]
+    then
+      if [ -e "${DRUPAL_ROOT}/sites/$DRUPAL_SITE/trusted_host_patterns.php.tpl" ]
+      then
+	cp -a ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/trusted_host_patterns.php.tpl ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/trusted_host_patterns.php
+      else 
+	cp -a /assets/var/www/html/trusted_host_patterns.php.tpl ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/trusted_host_patterns.php
+      fi
+    fi
+    
     chown $DEVELOPER_USER:www-data ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/settings.php
+    chown $DEVELOPER_USER:www-data ${DRUPAL_ROOT}/sites/$DRUPAL_SITE/trusted_host_patterns.php
     # drupal 7 tries to load 'default.settings.php' and not 'settings.php', so we use the settings.php as default.settings.php
     if [ "$DRUPAL_VERSION" == "7" ]
     then
@@ -168,8 +180,8 @@ function setup-drupal() {
   do
     VAR_TO_REPLACE=$(echo $var | awk -F= '{print $1}')
     VALUE_TO_SET=$(echo $var | awk -F= '{print $2}')
-    sed -i "s|_${VAR_TO_REPLACE}_|${VALUE_TO_SET}|g" ${DRUPAL_ROOT}/sites/*/*php
-    sed -i "s|_${VAR_TO_REPLACE}_|${VALUE_TO_SET}|g" ${DRUPAL_ROOT}/sites/*/*yml
+    sed -i "s%_${VAR_TO_REPLACE}_%${VALUE_TO_SET}%g" ${DRUPAL_ROOT}/sites/*/*php
+    sed -i "s%_${VAR_TO_REPLACE}_%${VALUE_TO_SET}%g" ${DRUPAL_ROOT}/sites/*/*yml
   done
 
   if [ "$DRUPAL_VERSION" == "7" ]
