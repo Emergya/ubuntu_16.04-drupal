@@ -9,26 +9,27 @@ function setup-drush(){
   if $(dpkg --compare-versions $DRUSH_VERSION ge 9)
   then
     DRUSH_CONFIG_DIR="/etc/drush/sites"
+    DRUSH_HOME_DIR="${DRUSH_HOME_DIR}/sites"
   else
     DRUSH_CONFIG_DIR="/etc/drush"
   fi
 
-  cp ${DRUSH_CONFIG_DIR}/drush.yml $DRUSH_HOME_DIR
+  cp ${DRUSH_CONFIG_DIR}/*.yml $DRUSH_HOME_DIR
   chown -R ${DEVELOPER_USER}:${DEVELOPER_USER} $DRUSH_HOME_DIR
 
   # Replace DRUPAL_ROOT in Drupal aliases '${DRUSH_CONFIG_DIR}/.'
-  for DRUSH_ALIASES_FILE in $(ls ${DRUSH_CONFIG_DIR})
+  for DRUSH_ALIASES_FILE in $(ls ${DRUSH_HOME_DIR})
   do
-    sed -i 's|_DRUPAL_ROOT_|'${DRUPAL_ROOT}'|g' ${DRUSH_CONFIG_DIR}/$DRUSH_ALIASES_FILE
-    sed -i 's|_PROJECT_NAME_|'${PROJECT_NAME}'|g' ${DRUSH_CONFIG_DIR}/$DRUSH_ALIASES_FILE
-    sed -i 's|_SSH_USER_|'${SSH_USER}'|g' ${DRUSH_CONFIG_DIR}/$DRUSH_ALIASES_FILE
-    sed -i 's|_DEVELOPER_HOME_|'${DEVELOPER_HOME}'|g' ${DRUSH_CONFIG_DIR}/$DRUSH_ALIASES_FILE
+    sed -i 's|_DRUPAL_ROOT_|'${DRUPAL_ROOT}'|g' ${DRUSH_HOME_DIR}/$DRUSH_ALIASES_FILE
+    sed -i 's|_PROJECT_NAME_|'${PROJECT_NAME}'|g' ${DRUSH_HOME_DIR}/$DRUSH_ALIASES_FILE
+    sed -i 's|_SSH_USER_|'${SSH_USER}'|g' ${DRUSH_HOME_DIR}/$DRUSH_ALIASES_FILE
+    sed -i 's|_DEVELOPER_HOME_|'${DEVELOPER_HOME}'|g' ${DRUSH_HOME_DIR}/$DRUSH_ALIASES_FILE
   done
 
   test $ENVIRONMENT != "dev" && \
-    sed -i "/^${ENVIRONMENT}:/,/options: '-i .*_PROJECT_NAME_.pem -p 22122'/d" ${DRUSH_CONFIG_DIR}/$DRUSH_ALIASES_FILE && \
-    sed -i "s%dev:%${ENVIRONMENT}:%g" ${DRUSH_CONFIG_DIR}/$DRUSH_ALIASES_FILE && \
-    sed -i "s%dev-%${ENVIRONMENT}-%g" ${DRUSH_CONFIG_DIR}/$DRUSH_ALIASES_FILE
+    sed -i "/^${ENVIRONMENT}:/,/options: '-i .*_PROJECT_NAME_.pem -p 22122'/d" ${DRUSH_HOME_DIR}/$DRUSH_ALIASES_FILE && \
+    sed -i "s%dev:%${ENVIRONMENT}:%g" ${DRUSH_HOME_DIR}/$DRUSH_ALIASES_FILE && \
+    sed -i "s%dev-%${ENVIRONMENT}-%g" ${DRUSH_HOME_DIR}/$DRUSH_ALIASES_FILE
 
 }
 
