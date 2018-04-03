@@ -5,9 +5,13 @@ function setup-drush(){
 
   DEVELOPER_HOME="/home/${DEVELOPER_USER}"
   DRUSH_HOME_DIR="${DEVELOPER_HOME}/.drush"
-  test $(dpkg --compare-versions $DRUSH_VERSION ge 9) && \
-    DRUSH_CONFIG_DIR="/etc/drush/sites" || \
+
+  if $(dpkg --compare-versions $DRUSH_VERSION ge 9)
+  then
+    DRUSH_CONFIG_DIR="/etc/drush/sites"
+  else
     DRUSH_CONFIG_DIR="/etc/drush"
+  fi
 
   cp ${DRUSH_CONFIG_DIR}/drush.yml $DRUSH_HOME_DIR
   chown -R ${DEVELOPER_USER}:${DEVELOPER_USER} $DRUSH_HOME_DIR
