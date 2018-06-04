@@ -10,12 +10,16 @@ function setup-drush(){
   then
     DRUSH_CONFIG_DIR="/etc/drush/sites"
     DRUSH_HOME_DIR="${DRUSH_HOME_DIR}/sites"
+
+    test ! -e $DRUSH_HOME_DIR && \
+      mkdir -p $DRUSH_HOME_DIR
+
+    cp ${DRUSH_CONFIG_DIR}/*.yml $DRUSH_HOME_DIR
+    chown -R ${DEVELOPER_USER}:${DEVELOPER_USER} $DRUSH_HOME_DIR
+    rm ${DRUSH_CONFIG_DIR}/*.php
   else
     DRUSH_CONFIG_DIR="/etc/drush"
   fi
-
-  cp ${DRUSH_CONFIG_DIR}/*.yml $DRUSH_HOME_DIR
-  chown -R ${DEVELOPER_USER}:${DEVELOPER_USER} $DRUSH_HOME_DIR
 
   # Replace DRUPAL_ROOT in Drupal aliases '${DRUSH_CONFIG_DIR}/.'
   for DRUSH_ALIASES_FILE in $(ls ${DRUSH_HOME_DIR})
@@ -27,7 +31,7 @@ function setup-drush(){
   done
 
   test $ENVIRONMENT != "dev" && \
-    sed -i "/^${ENVIRONMENT}:/,/options: '-i .*_PROJECT_NAME_.pem -p 22122'/d" ${DRUSH_HOME_DIR}/$DRUSH_ALIASES_FILE && \
+    sed -i "/^${ENVIRONMENT}:/,/^    options:/d" ${DRUSH_HOME_DIR}/$DRUSH_ALIASES_FILE && \
     sed -i "s%dev:%${ENVIRONMENT}:%g" ${DRUSH_HOME_DIR}/$DRUSH_ALIASES_FILE && \
     sed -i "s%dev-%${ENVIRONMENT}-%g" ${DRUSH_HOME_DIR}/$DRUSH_ALIASES_FILE
 

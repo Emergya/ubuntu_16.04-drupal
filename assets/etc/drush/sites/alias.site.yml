@@ -1,0 +1,52 @@
+dev:
+  root: _DRUPAL_ROOT_
+  uri: dev-_PROJECT_NAME_.emergyalabs.com
+demo:
+  host: demo-_PROJECT_NAME_.emergyalabs.com
+  options: {  }
+  root: _DRUPAL_ROOT_
+  uri: demo-_PROJECT_NAME_.emergyalabs.com
+  user: _SSH_USER_
+  ssh:
+    options: '-i _DEVELOPER_HOME_/.ssh/_PROJECT_NAME_.pem -p 22122'
+ci:
+  host: ci-_PROJECT_NAME_.emergyalabs.com
+  options: {  }
+  root: _DRUPAL_ROOT_
+  uri: ci-_PROJECT_NAME_.emergyalabs.com
+  user: _SSH_USER_
+  ssh:
+    options: '-i _DEVELOPER_HOME_/.ssh/_PROJECT_NAME_.pem -p 22122'
+pre:
+  host: pre-_PROJECT_NAME_.emergyalabs.com
+  options: {  }
+  root: _DRUPAL_ROOT_
+  uri: pre-_PROJECT_NAME_.emergyalabs.com
+  user: _SSH_USER_
+  ssh:
+    options: '-i _DEVELOPER_HOME_/.ssh/_PROJECT_NAME_.pem -p 22122'
+pro:
+  host: pro-_PROJECT_NAME_.emergyalabs.com
+  options: {  }
+  root: _DRUPAL_ROOT_
+  uri: pro-_PROJECT_NAME_.emergyalabs.com
+  user: _SSH_USER_
+  ssh:
+    options: '-i _DEVELOPER_HOME_/.ssh/_PROJECT_NAME_.pem -p 22122'
+qa:
+  host: qa-_PROJECT_NAME_.emergyalabs.com
+  options: {  }
+  root: _DRUPAL_ROOT_
+  uri: qa-_PROJECT_NAME_.emergyalabs.com
+  user: _SSH_USER_
+  ssh:
+    options: '-i _DEVELOPER_HOME_/.ssh/_PROJECT_NAME_.pem -p 22122'
+stg:
+  host: stg-_PROJECT_NAME_.emergyalabs.com
+  options: {  }
+  root: _DRUPAL_ROOT_
+  uri: stg-_PROJECT_NAME_.emergyalabs.com
+  user: _SSH_USER_
+  ssh:
+    options: '-i _DEVELOPER_HOME_/.ssh/_PROJECT_NAME_.pem -p 22122'
+
