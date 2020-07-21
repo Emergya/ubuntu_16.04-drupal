@@ -1,4 +1,4 @@
-FROM emergya/ubuntu_16.04-apache-php-mysql:201709260728-4d1fc77
+FROM ubuntu_16.04-apache-php7.3-mysql
 
 #================================
 # Build arguments
@@ -24,7 +24,7 @@ RUN /bin/bash -c 'cd /tmp/ && \
       cd uploadprogress && \
       phpize && \
       ./configure && make && make install && \
-      echo "extension=uploadprogress.so" > /etc/php/7.0/mods-available/uploadprogress.ini && \
+      echo "extension=uploadprogress.so" > /etc/php/7.3/mods-available/uploadprogress.ini && \
       phpenmod uploadprogress'
 
 ## Install Drush.
@@ -51,9 +51,9 @@ ADD assets/var/www/html /assets/var/www/html
 RUN /bin/bash -c 'if [ -e /assets/var/www/html/composer.json ]; then \
                     mv /var/www/html /var/www/html.dist; \
                     ln -s /assets/var/www/html /var/www/html; \
-                    mv /etc/php/7.0/cli/conf.d/20-xdebug.ini /tmp/; \
+                    mv /etc/php/7.3/cli/conf.d/20-xdebug.ini /tmp/; \
                     composer install; \
-                    mv /tmp/20-xdebug.ini /etc/php/7.0/cli/conf.d/20-xdebug.ini; \
+                    mv /tmp/20-xdebug.ini /etc/php/7.3/cli/conf.d/20-xdebug.ini; \
                     chown -R www-data: /var/www/html/; \
                     rm -f /var/www/html; mkdir /var/www/html; \
                   else \
